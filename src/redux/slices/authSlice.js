@@ -1,104 +1,182 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import mockUsers from "../../mockData/users";
 
-const API_URL = process.env.REACT_APP_API_URL || "/api";
+// Helper function to generate a mock token
+const generateMockToken = (userId) => {
+  return `mock-token-${userId}-${Date.now()}`;
+};
 
 // Helper function to set auth token
 const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem("token", token);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
     localStorage.removeItem("token");
-    delete axios.defaults.headers.common["Authorization"];
   }
 };
 
-// Initialize axios with token if it exists
+// Initialize with token if it exists
 const token = localStorage.getItem("token");
-if (token) {
-  setAuthToken(token);
-}
 
-// Login user
+// Mock login function
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
-      localStorage.setItem("token", response.data.token);
-      return response.data;
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Find user by email and check password
+      const user = mockUsers.find(
+        (user) =>
+          user.email === credentials.email &&
+          user.password === credentials.password
+      );
+
+      if (!user) {
+        return rejectWithValue("Invalid email or password");
+      }
+
+      // Create a copy of user without the password
+      const { password, ...userWithoutPassword } = user;
+
+      // Generate a mock token
+      const token = generateMockToken(user.id);
+      localStorage.setItem("token", token);
+
+      return {
+        user: userWithoutPassword,
+        token,
+      };
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue("Login failed. Please try again.");
     }
   }
 );
 
-// Register user
+// Mock register function
 export const register = createAsyncThunk(
   "auth/register",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, userData);
-      localStorage.setItem("token", response.data.token);
-      return response.data;
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Check if email already exists
+      const existingUser = mockUsers.find(
+        (user) => user.email === userData.email
+      );
+      if (existingUser) {
+        return rejectWithValue("Email already in use");
+      }
+
+      // Create a new user (in a real app, this would be saved to the database)
+      const newUser = {
+        id: mockUsers.length + 1,
+        username: userData.username || userData.email.split("@")[0],
+        email: userData.email,
+        password: userData.password,
+        role: "employee",
+        first_name: userData.first_name || "",
+        last_name: userData.last_name || "",
+        department: userData.department || "",
+        position: userData.position || "",
+        phone: userData.phone || "",
+        hire_date: new Date().toISOString().split("T")[0],
+        profile_image: `https://randomuser.me/api/portraits/${
+          Math.random() > 0.5 ? "men" : "women"
+        }/${Math.floor(Math.random() * 100)}.jpg`,
+      };
+
+      // In a real app, we would add the user to the database
+      // For this mock, we'll just pretend it was added
+
+      // Create a copy of user without the password
+      const { password, ...userWithoutPassword } = newUser;
+
+      // Generate a mock token
+      const token = generateMockToken(newUser.id);
+      localStorage.setItem("token", token);
+
+      return {
+        user: userWithoutPassword,
+        token,
+      };
     } catch (error) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue("Registration failed. Please try again.");
     }
   }
 );
 
-// Get user profile
+// Mock get profile function
 export const getProfile = createAsyncThunk(
   "auth/getProfile",
   async (_, { rejectWithValue }) => {
     try {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       const token = localStorage.getItem("token");
       if (!token) {
         return rejectWithValue("Authentication token not found");
       }
 
-      console.log("Getting profile with token:", token);
-      const response = await axios.get(`${API_URL}/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("Profile response:", response.data);
-      return response.data;
+      // Extract user ID from token (in a real app, you would decode the JWT)
+      const userId = parseInt(token.split("-")[2]);
+
+      // Find user by ID
+      const user = mockUsers.find((user) => user.id === userId);
+      if (!user) {
+        return rejectWithValue("User not found");
+      }
+
+      // Create a copy of user without the password
+      const { password, ...userWithoutPassword } = user;
+
+      return userWithoutPassword;
     } catch (error) {
-      console.error("Get profile error:", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch profile"
-      );
+      return rejectWithValue("Failed to fetch profile");
     }
   }
 );
 
-// Update user profile
+// Mock update profile function
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
-  async (userData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue, getState }) => {
     try {
-      // Ensure token is set in headers
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const token = localStorage.getItem("token");
       if (!token) {
         return rejectWithValue("Authentication token not found");
       }
 
-      const response = await axios.put(`${API_URL}/auth/profile`, userData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
+      // Get current user from state
+      const currentUser = getState().auth.user;
+      if (!currentUser) {
+        return rejectWithValue("User not found");
+      }
+
+      // Update user data (in a real app, this would update the database)
+      const updatedUser = {
+        ...currentUser,
+        ...userData,
+      };
+
+      return updatedUser;
     } catch (error) {
-      console.error("Update profile error:", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to update profile"
-      );
+      return rejectWithValue("Failed to update profile");
     }
   }
 );
 
-// Logout user
+// Mock logout function
 export const logout = createAsyncThunk("auth/logout", async () => {
+  // Simulate API delay
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   localStorage.removeItem("token");
   setAuthToken(null);
 });

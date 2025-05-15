@@ -10,9 +10,17 @@ import {
   Link,
   Alert,
   Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Divider,
 } from "@mui/material";
 import { login } from "../../redux/slices/authSlice";
 import AuthFooter from "../../components/AuthFooter";
+import mockUsers from "../../mockData/users";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -137,6 +145,51 @@ function Login() {
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+                Mock Users (for testing)
+              </Typography>
+
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Role</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Password</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {mockUsers.map((user) => (
+                      <TableRow
+                        key={user.id}
+                        hover
+                        onClick={() =>
+                          setFormData({
+                            email: user.email,
+                            password: user.password,
+                          })
+                        }
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.password}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <Typography
+                variant="caption"
+                align="center"
+                sx={{ mt: 1, display: "block" }}
+              >
+                Click on any row to auto-fill the login form
+              </Typography>
             </Box>
           </Paper>
         </Box>
