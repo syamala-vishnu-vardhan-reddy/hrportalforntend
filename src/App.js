@@ -1,56 +1,63 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 // Layout
-import Layout from './components/layout/Layout';
+import Layout from "./components/layout/Layout";
 
 // Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 // Dashboard
-import Dashboard from './pages/dashboard/Dashboard';
+import Dashboard from "./pages/dashboard/Dashboard";
 
 // Employee Pages
-import EmployeeList from './pages/employees/EmployeeList';
-import EmployeeProfile from './pages/employees/EmployeeProfile';
+import EmployeeList from "./pages/employees/EmployeeList";
+import EmployeeProfile from "./pages/employees/EmployeeProfile";
+import MockEmployeeList from "./pages/employees/MockEmployeeList";
 
 // Leave Management
-import LeaveList from './pages/leaves/LeaveList';
-import LeaveRequest from './pages/leaves/LeaveRequest';
+import LeaveList from "./pages/leaves/LeaveList";
+import LeaveRequest from "./pages/leaves/LeaveRequest";
+import MockLeaveList from "./pages/leaves/MockLeaveList";
 
 // Performance Management
-import PerformanceList from './pages/performance/PerformanceList';
-import PerformanceReview from './pages/performance/PerformanceReview';
+import PerformanceList from "./pages/performance/PerformanceList";
+import PerformanceReview from "./pages/performance/PerformanceReview";
 
 // Attendance
-import AttendanceList from './pages/attendance/AttendanceList';
-import AttendanceCheck from './pages/attendance/AttendanceCheck';
+import AttendanceList from "./pages/attendance/AttendanceList";
+import AttendanceCheck from "./pages/attendance/AttendanceCheck";
 
 // Documents
-import DocumentList from './pages/documents/DocumentList';
-import DocumentUpload from './pages/documents/DocumentUpload';
+import DocumentList from "./pages/documents/DocumentList";
+import DocumentUpload from "./pages/documents/DocumentUpload";
 
 // Payroll
-import PayrollList from './pages/payroll/PayrollList';
-import PayrollDetails from './pages/payroll/PayrollDetails';
+import PayrollList from "./pages/payroll/PayrollList";
+import PayrollDetails from "./pages/payroll/PayrollDetails";
 
 // Profile
-import Profile from './pages/profile/Profile';
+import Profile from "./pages/profile/Profile";
 
 // Not Found
-import NotFound from './pages/NotFound';
+import NotFound from "./pages/NotFound";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: "#1976d2",
     },
     secondary: {
-      main: '#dc004e',
+      main: "#dc004e",
     },
   },
 });
@@ -77,8 +84,18 @@ function App() {
       <Router>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
-          <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" />} />
+          <Route
+            path="/login"
+            element={
+              !isAuthenticated ? <Login /> : <Navigate to="/dashboard" />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              !isAuthenticated ? <Register /> : <Navigate to="/dashboard" />
+            }
+          />
 
           {/* Protected Routes */}
           <Route
@@ -91,20 +108,28 @@ function App() {
           >
             <Route index element={<Navigate to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
-            
+
             {/* Employee Routes */}
             <Route
               path="employees"
               element={
-                <ProtectedRoute roles={['admin', 'hr']}>
+                <ProtectedRoute roles={["admin", "hr"]}>
                   <EmployeeList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="employees/mock"
+              element={
+                <ProtectedRoute roles={["admin", "hr"]}>
+                  <MockEmployeeList />
                 </ProtectedRoute>
               }
             />
             <Route
               path="employees/:id"
               element={
-                <ProtectedRoute roles={['admin', 'hr']}>
+                <ProtectedRoute roles={["admin", "hr"]}>
                   <EmployeeProfile />
                 </ProtectedRoute>
               }
@@ -112,6 +137,7 @@ function App() {
 
             {/* Leave Routes */}
             <Route path="leaves" element={<LeaveList />} />
+            <Route path="leaves/mock" element={<MockLeaveList />} />
             <Route path="leaves/request" element={<LeaveRequest />} />
 
             {/* Performance Routes */}
@@ -130,7 +156,7 @@ function App() {
             <Route
               path="payroll"
               element={
-                <ProtectedRoute roles={['admin', 'hr']}>
+                <ProtectedRoute roles={["admin", "hr"]}>
                   <PayrollList />
                 </ProtectedRoute>
               }
@@ -138,7 +164,7 @@ function App() {
             <Route
               path="payroll/:id"
               element={
-                <ProtectedRoute roles={['admin', 'hr']}>
+                <ProtectedRoute roles={["admin", "hr"]}>
                   <PayrollDetails />
                 </ProtectedRoute>
               }
@@ -157,4 +183,3 @@ function App() {
 }
 
 export default App;
-
