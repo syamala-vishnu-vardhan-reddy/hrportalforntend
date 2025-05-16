@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchPayrolls,
   generatePayroll,
-  updatePayroll
-} from '../redux/slices/payrollSlice';
+  updatePayroll,
+} from "../redux/slices/payrollSlice";
 import {
   Table,
   Button,
@@ -16,9 +16,10 @@ import {
   Card,
   Row,
   Col,
-  Statistic
-} from 'antd';
-import { DollarOutlined, UserOutlined, CalendarOutlined } from '@ant-design/icons';
+  Statistic,
+} from "antd";
+import { UserOutlined, CalendarOutlined } from "@ant-design/icons";
+import { RupeeOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -36,87 +37,92 @@ const Payroll = () => {
 
   const handleGeneratePayroll = async (values) => {
     try {
-      await dispatch(generatePayroll({
-        ...values,
-        month: selectedMonth,
-        year: selectedYear
-      })).unwrap();
-      message.success('Payroll generated successfully');
+      await dispatch(
+        generatePayroll({
+          ...values,
+          month: selectedMonth,
+          year: selectedYear,
+        })
+      ).unwrap();
+      message.success("Payroll generated successfully");
       setIsModalVisible(false);
       form.resetFields();
     } catch (error) {
-      message.error(error.message || 'Failed to generate payroll');
+      message.error(error.message || "Failed to generate payroll");
     }
   };
 
   const handleUpdatePayroll = async (id, values) => {
     try {
       await dispatch(updatePayroll({ id, ...values })).unwrap();
-      message.success('Payroll updated successfully');
+      message.success("Payroll updated successfully");
     } catch (error) {
-      message.error(error.message || 'Failed to update payroll');
+      message.error(error.message || "Failed to update payroll");
     }
   };
 
   const columns = [
     {
-      title: 'Employee',
-      dataIndex: 'employee',
-      key: 'employee',
-      render: (employee) => employee?.name || 'N/A'
+      title: "Employee",
+      dataIndex: "employee",
+      key: "employee",
+      render: (employee) => employee?.name || "N/A",
     },
     {
-      title: 'Basic Salary',
-      dataIndex: 'basicSalary',
-      key: 'basicSalary',
-      render: (salary) => `$${salary.toFixed(2)}`
+      title: "Basic Salary",
+      dataIndex: "basicSalary",
+      key: "basicSalary",
+      render: (salary) => `₹${salary.toFixed(2)}`,
     },
     {
-      title: 'Allowances',
-      dataIndex: 'allowances',
-      key: 'allowances',
-      render: (allowances) => `$${allowances.toFixed(2)}`
+      title: "Allowances",
+      dataIndex: "allowances",
+      key: "allowances",
+      render: (allowances) => `₹${allowances.toFixed(2)}`,
     },
     {
-      title: 'Deductions',
-      dataIndex: 'deductions',
-      key: 'deductions',
-      render: (deductions) => `$${deductions.toFixed(2)}`
+      title: "Deductions",
+      dataIndex: "deductions",
+      key: "deductions",
+      render: (deductions) => `₹${deductions.toFixed(2)}`,
     },
     {
-      title: 'Net Salary',
-      dataIndex: 'netSalary',
-      key: 'netSalary',
-      render: (salary) => `$${salary.toFixed(2)}`
+      title: "Net Salary",
+      dataIndex: "netSalary",
+      key: "netSalary",
+      render: (salary) => `₹${salary.toFixed(2)}`,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <span style={{ color: status === 'paid' ? 'green' : 'orange' }}>
+        <span style={{ color: status === "paid" ? "green" : "orange" }}>
           {status.toUpperCase()}
         </span>
-      )
+      ),
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Button
           type="link"
-          onClick={() => handleUpdatePayroll(record._id, { status: 'paid' })}
-          disabled={record.status === 'paid'}
+          onClick={() => handleUpdatePayroll(record._id, { status: "paid" })}
+          disabled={record.status === "paid"}
         >
           Mark as Paid
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
-  const totalSalary = payrolls.reduce((sum, payroll) => sum + payroll.netSalary, 0);
+  const totalSalary = payrolls.reduce(
+    (sum, payroll) => sum + payroll.netSalary,
+    0
+  );
   const totalEmployees = payrolls.length;
-  const paidCount = payrolls.filter(p => p.status === 'paid').length;
+  const paidCount = payrolls.filter((p) => p.status === "paid").length;
 
   return (
     <div className="p-6">
@@ -129,8 +135,8 @@ const Payroll = () => {
               title="Total Salary"
               value={totalSalary}
               precision={2}
-              prefix={<DollarOutlined />}
-              valueStyle={{ color: '#3f8600' }}
+              prefix={<RupeeOutlined />}
+              valueStyle={{ color: "#3f8600" }}
             />
           </Card>
         </Col>
@@ -163,7 +169,7 @@ const Payroll = () => {
           >
             {Array.from({ length: 12 }, (_, i) => (
               <Option key={i + 1} value={i + 1}>
-                {new Date(2000, i).toLocaleString('default', { month: 'long' })}
+                {new Date(2000, i).toLocaleString("default", { month: "long" })}
               </Option>
             ))}
           </Select>
@@ -198,15 +204,11 @@ const Payroll = () => {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
-        <Form
-          form={form}
-          onFinish={handleGeneratePayroll}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleGeneratePayroll} layout="vertical">
           <Form.Item
             name="employee"
             label="Employee"
-            rules={[{ required: true, message: 'Please select an employee' }]}
+            rules={[{ required: true, message: "Please select an employee" }]}
           >
             <Select placeholder="Select employee">
               {/* Add employee options here */}
@@ -215,23 +217,23 @@ const Payroll = () => {
           <Form.Item
             name="basicSalary"
             label="Basic Salary"
-            rules={[{ required: true, message: 'Please enter basic salary' }]}
+            rules={[{ required: true, message: "Please enter basic salary" }]}
           >
-            <Input type="number" prefix="$" />
+            <Input type="number" prefix="₹" />
           </Form.Item>
           <Form.Item
             name="allowances"
             label="Allowances"
-            rules={[{ required: true, message: 'Please enter allowances' }]}
+            rules={[{ required: true, message: "Please enter allowances" }]}
           >
-            <Input type="number" prefix="$" />
+            <Input type="number" prefix="₹" />
           </Form.Item>
           <Form.Item
             name="deductions"
             label="Deductions"
-            rules={[{ required: true, message: 'Please enter deductions' }]}
+            rules={[{ required: true, message: "Please enter deductions" }]}
           >
-            <Input type="number" prefix="$" />
+            <Input type="number" prefix="₹" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
@@ -244,4 +246,4 @@ const Payroll = () => {
   );
 };
 
-export default Payroll; 
+export default Payroll;

@@ -28,7 +28,7 @@ import {
   Assessment as AssessmentIcon,
   AccessTime as AccessTimeIcon,
   Description as DescriptionIcon,
-  AttachMoney as AttachMoneyIcon,
+  CurrencyRupee,
 } from "@mui/icons-material";
 import { logout } from "../../redux/slices/authSlice";
 
@@ -80,7 +80,7 @@ function Layout() {
     { text: "Documents", icon: <DescriptionIcon />, path: "/documents" },
     {
       text: "Payroll",
-      icon: <AttachMoneyIcon />,
+      icon: <CurrencyRupee />,
       path: "/payroll",
       roles: ["admin", "hr"],
     },
